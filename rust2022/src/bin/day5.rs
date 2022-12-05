@@ -19,7 +19,7 @@ impl FromStr for Task {
     type Err = anyhow::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut container: Vec<usize> = s
+        let container: Vec<usize> = s
             .split_whitespace()
             .filter_map(|s| s.parse::<usize>().ok())
             .collect::<Vec<usize>>();
@@ -45,8 +45,8 @@ fn main() -> Result<()> {
 
     let mut container2: Vec<String> = container.clone();
 
-    let part1: String = p1(input, &mut container);
-    let part2: String = p2(input, &mut container2);
+    let part1: String = solve(input, &mut container, false);
+    let part2: String = solve(input, &mut container2, true);
 
     println!("Result of part 1: {}", part1);
     println!("Result of part 2: {}", part2);
@@ -54,34 +54,20 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn p1(input: &str, container: &mut Vec<String>) -> String {
+fn solve(input: &str, container: &mut Vec<String>, keep_still: bool) -> String {
     for line in input.lines() {
         let task = line.parse::<Task>().unwrap();
 
-        move_slot(&task, container, false);
+        move_slot(&task, container, keep_still);
     }
 
-    get_top(&container)
-}
-
-fn p2(input: &str, container: &mut Vec<String>) -> String {
-    for line in input.lines() {
-        let task = line.parse::<Task>().unwrap();
-
-        move_slot(&task, container, true);
-    }
-
-    get_top(&container)
+    return get_top(&container);
 }
 
 fn move_slot(task: &Task, container: &mut Vec<String>, keep_still: bool) {
-    let mut items = String::new();
-
-    (0..task.amount).for_each(|_| {
-        let elem: char = container[task.from - 1].pop().unwrap();
-
-        items.push(elem);
-    });
+    let mut items: String = (0..task.amount)
+        .map(|_| container[task.from - 1].pop().unwrap())
+        .collect();
 
     if keep_still {
         items = items.chars().rev().collect();
@@ -91,8 +77,8 @@ fn move_slot(task: &Task, container: &mut Vec<String>, keep_still: bool) {
 }
 
 fn get_top(container: &Vec<String>) -> String {
-    container
+    return container
         .iter()
         .map(|s| s.chars().last().unwrap())
-        .collect::<String>()
+        .collect::<String>();
 }
