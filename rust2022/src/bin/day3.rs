@@ -1,44 +1,82 @@
+#![feature(iter_array_chunks)]
+
+use std::{
+    collections::{HashMap, HashSet},
+    rc::Rc,
+    str::FromStr,
+};
+
 use anyhow::Result;
-use std::fs::File;
-use std::io::{BufRead, BufReader, Lines};
 
-fn part1() {
-    let result: u32 = include_str!("../files/day3.txt")
-        .lines()
-        .map(|line| {
-            let half: usize = line.len() / 2;
-            let first_half: String = line.chars().take(half).collect();
-            let second_half: String = line.chars().skip(half).take(half).collect();
+const START_LOWER: u8 = b'a' - 1;
+const START_UPPER: u8 = b'A' - 1;
 
-            let mut char_in_both: char = 'a';
-
-            // find same char in each string
-            for c in first_half.chars() {
-                if second_half.contains(c) {
-                    char_in_both = c;
-                    break;
-                }
-            }
-
-            // compute it's value
-            let reduce: u32 = if char_in_both.is_uppercase() { 38 } else { 96 };
-
-            char_in_both as u32 - reduce
-        })
-        .sum();
-
-    println!("Result of day 3 is: {}", result);
+struct Item {
+    value: usize,
 }
 
-fn read_from_file(path: &str) -> Lines<BufReader<File>> {
-    let file = File::open(path).expect("Cannot read file :/");
-    BufReader::new(file).lines()
+impl TryFrom<&u8> for Item {
+    type Error = ();
+
+    fn try_from(value: &u8) -> Result<Self, Self::Error> {
+        let value = if *value > b'a' {
+            *value as u8 - b'a' + 1
+        } else {
+            *value as u8 - b'A' + 27
+        };
+
+        Ok(Self {
+            value: value as usize,
+        })
+    }
+}
+
+fn check_group(chunk: &[&str]) -> usize {
+    let mut occurrences: [u8; 53] = [0; 53];
+    let mut sum = 0;
+
+    for (row_index, sack) in chunk.iter().enumerate() {
+        for element in sack.as_bytes() {
+            let item = Item::try_from(element).unwrap();
+
+            occurrences[item.value] |= 1 << row_index;
+            if occurrences[item.value] == 0b111 {
+                sum += item.value;
+                break;
+            }
+        }
+    }
+    return sum;
 }
 
 fn main() -> Result<()> {
-    let lines = read_from_file("src/files/day3.txt");
+    let foo = std::fs::read_to_string("src/files/day3.txt")?
+        .lines()
+        .array_chunks::<3>()
+        .flat_map(|line| {
+            return line
+                .iter()
+                .flat_map(|line| line.chars().collect::<HashSet<_>>().into_iter())
+                .fold(HashMap::new(), |mut map: HashMap<char, u32>, c| {
+                    *map.entry(c).or_insert(0) += 1;
+                    map
+                })
+                .into_iter()
+                .filter(|(_, v)| *v == 3);
+        })
+        .map(|c| c.0)
+        .map(|c| {
+            let value = if c.is_ascii_lowercase() {
+                c as u8 - START_LOWER
+            } else {
+                c as u8 - START_UPPER + 26
+            } as u32;
 
-    for line in lines {}
+            return value;
+        })
+        .sum::<u32>();
 
-    Ok(())
+    println!("{}", foo);
+
+    return Ok(());
 }

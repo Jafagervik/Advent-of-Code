@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use anyhow::Result;
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 struct Task {
     amount: usize,
     from: usize,
@@ -43,7 +43,7 @@ fn main() -> Result<()> {
         String::from("LGSRBNVM"),
     ];
 
-    let mut container2: Vec<String> = container.clone();
+    let mut container2 = container.clone();
 
     let part1: String = solve(input, &mut container, false);
     let part2: String = solve(input, &mut container2, true);
@@ -58,13 +58,13 @@ fn solve(input: &str, container: &mut Vec<String>, keep_still: bool) -> String {
     for line in input.lines() {
         let task = line.parse::<Task>().unwrap();
 
-        move_slot(&task, container, keep_still);
+        move_stack(task, container, keep_still);
     }
 
-    return get_top(&container);
+    return get_top_element(&container);
 }
 
-fn move_slot(task: &Task, container: &mut Vec<String>, keep_still: bool) {
+fn move_stack(task: Task, container: &mut Vec<String>, keep_still: bool) {
     let mut items: String = (0..task.amount)
         .map(|_| container[task.from - 1].pop().unwrap())
         .collect();
@@ -76,7 +76,7 @@ fn move_slot(task: &Task, container: &mut Vec<String>, keep_still: bool) {
     container[task.to - 1].push_str(items.as_str());
 }
 
-fn get_top(container: &Vec<String>) -> String {
+fn get_top_element(container: &Vec<String>) -> String {
     return container
         .iter()
         .map(|s| s.chars().last().unwrap())
