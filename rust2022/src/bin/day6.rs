@@ -1,31 +1,12 @@
-use std::str::FromStr;
+use std::collections::HashSet;
 
 use anyhow::Result;
-
-#[derive(Debug)]
-struct Task {
-    field: u64,
-}
-
-impl Task {
-    pub fn new(field: u64) -> Self {
-        Task { field }
-    }
-}
-
-impl FromStr for Task {
-    type Err = anyhow::Error;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Task::new(s.parse::<u64>().unwrap_or(0)))
-    }
-}
 
 fn main() -> Result<()> {
     let input = include_str!("../files/day6.txt");
 
-    let p1 = solve(&input);
-    let p2 = solve(&input);
+    let p1 = solve(&input, 4);
+    let p2 = solve(&input, 14);
 
     println!("Part 1: {}", p1);
     println!("Part 2: {}", p2);
@@ -33,10 +14,23 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn solve(input: &str) -> u64 {
-    input
-        .lines()
-        .map(|line| line.parse::<Task>().unwrap())
-        .map(|t| t.field)
-        .sum()
+fn solve(input: &str, slize_size: usize) -> usize {
+    let mut marker: usize = 0;
+
+    let mut sets: HashSet<char>;
+
+    for i in 0..input.len() - slize_size {
+        sets = (i..i + slize_size)
+            .map(|s| input.chars().nth(s).unwrap())
+            .collect();
+
+        if sets.len() == slize_size {
+            marker = i + slize_size;
+            break;
+        }
+
+        sets.clear();
+    }
+
+    return marker;
 }
