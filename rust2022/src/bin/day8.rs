@@ -118,5 +118,5 @@ fn part2(mat: &Vec<Vec<usize>>, M: usize, N: usize) -> usize {
         }
     }
 
-    *viewing_distances.iter().max().unwrap() as usize
+    *viewing_distances.iter().max().unwrap()
 }
