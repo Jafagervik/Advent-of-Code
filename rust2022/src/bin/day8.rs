@@ -1,15 +1,17 @@
 use anyhow::Result;
 use std::time;
 
+type Matrix = Vec<Vec<usize>>;
+
 fn main() -> Result<()> {
-    let mat = include_str!("../files/day8.txt")
+    let mat: Matrix = include_str!("../files/day8.txt")
         .lines()
         .map(|s| {
             s.chars()
-                .map(|c| (c.to_string()).parse::<usize>().unwrap())
-                .collect::<Vec<usize>>()
+                .map(|c| (c.to_string()).parse().unwrap())
+                .collect()
         })
-        .collect::<Vec<Vec<usize>>>();
+        .collect();
 
     let M: usize = mat.len(); // ROWS
     let N: usize = mat[0].len(); // COLS
@@ -28,7 +30,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn part1(mat: &Vec<Vec<usize>>, M: usize, N: usize) -> usize {
+fn part1(mat: &Matrix, M: usize, N: usize) -> usize {
     let circ = 2 * N + 2 * M - 4;
 
     let mut counter = 0;
@@ -74,7 +76,7 @@ fn part1(mat: &Vec<Vec<usize>>, M: usize, N: usize) -> usize {
     counter + circ
 }
 
-fn part2(mat: &Vec<Vec<usize>>, M: usize, N: usize) -> usize {
+fn part2(mat: &Matrix, M: usize, N: usize) -> usize {
     let mut viewing_distances: Vec<usize> = Vec::new();
 
     for r in 1..M - 1 {
