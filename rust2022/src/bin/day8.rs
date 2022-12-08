@@ -82,41 +82,32 @@ fn part2(mat: &Matrix, M: usize, N: usize) -> usize {
     for r in 1..M - 1 {
         for c in 1..N - 1 {
             let val = &mat[r][c];
-            let mut view_dist: usize = 1;
 
             // UP
-            let dist = match (r + 1..M).map(|y| mat[y][c]).position(|v| v >= *val) {
+            let mut dist = match (r + 1..M).map(|y| mat[y][c]).position(|v| v >= *val) {
                 Some(d) => d + 1,
                 None => M - r - 1,
             };
 
-            view_dist *= dist;
-
             // DOWN
-            let dist = match (0..r).rev().map(|y| mat[y][c]).position(|v| v >= *val) {
+            dist *= match (0..r).rev().map(|y| mat[y][c]).position(|v| v >= *val) {
                 Some(d) => d + 1,
                 None => r,
             };
 
-            view_dist *= dist;
-
             // RIGHT
-            let dist = match (c + 1..N).map(|x| mat[r][x]).position(|v| v >= *val) {
+            dist *= match (c + 1..N).map(|x| mat[r][x]).position(|v| v >= *val) {
                 Some(d) => d + 1,
                 None => N - c - 1,
             };
 
-            view_dist *= dist;
-
             // LEFT
-            let dist = match (0..c).rev().map(|x| mat[r][x]).position(|v| v >= *val) {
+            dist *= match (0..c).rev().map(|x| mat[r][x]).position(|v| v >= *val) {
                 Some(d) => d + 1,
                 None => c,
             };
 
-            view_dist *= dist;
-
-            viewing_distances.push(view_dist);
+            viewing_distances.push(dist);
         }
     }
 
