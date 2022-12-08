@@ -40,7 +40,7 @@ fn part1(mat: &Matrix, M: usize, N: usize) -> usize {
             let val = &mat[r][c];
 
             // UP
-            let blocked = (r + 1..M).filter(|y| mat[*y][c] >= *val).count() != 0;
+            let blocked = (r + 1..M).filter(|&y| mat[y][c] >= *val).count() != 0;
 
             if !blocked {
                 counter += 1;
@@ -48,7 +48,7 @@ fn part1(mat: &Matrix, M: usize, N: usize) -> usize {
             }
 
             // DOWN
-            let blocked = (0..r).rev().filter(|y| mat[*y][c] >= *val).count() != 0;
+            let blocked = (0..r).rev().filter(|&y| mat[y][c] >= *val).count() != 0;
 
             if !blocked {
                 counter += 1;
@@ -56,7 +56,7 @@ fn part1(mat: &Matrix, M: usize, N: usize) -> usize {
             }
 
             // RIGHT
-            let blocked = (c + 1..N).filter(|x| mat[r][*x] >= *val).count() != 0;
+            let blocked = (c + 1..N).filter(|&x| mat[r][x] >= *val).count() != 0;
 
             if !blocked {
                 counter += 1;
@@ -64,7 +64,7 @@ fn part1(mat: &Matrix, M: usize, N: usize) -> usize {
             }
 
             // LEFT
-            let blocked = (0..c).rev().filter(|x| mat[r][*x] >= *val).count() != 0;
+            let blocked = (0..c).rev().filter(|&x| mat[r][x] >= *val).count() != 0;
 
             if !blocked {
                 counter += 1;
