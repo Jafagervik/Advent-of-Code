@@ -1,4 +1,5 @@
 use anyhow::Result;
+use std::time;
 
 fn main() -> Result<()> {
     let mat = include_str!("../files/day8.txt")
@@ -13,8 +14,16 @@ fn main() -> Result<()> {
     let M: usize = mat.len(); // ROWS
     let N: usize = mat[0].len(); // COLS
 
-    println!("Part 1: {}", part1(&mat, M, N));
-    println!("Part 2: {}", part2(&mat, M, N));
+    let t0 = time::Instant::now();
+    let p1 = part1(&mat, M, N);
+    println!("Time P1 {:?}", time::Instant::now().duration_since(t0));
+
+    let t1 = time::Instant::now();
+    let p2 = part2(&mat, M, N);
+    println!("Time P2 {:?}", time::Instant::now().duration_since(t1));
+
+    println!("Part 1: {}", p1);
+    println!("Part 2: {}", p2);
 
     Ok(())
 }
@@ -74,9 +83,7 @@ fn part2(mat: &Vec<Vec<usize>>, M: usize, N: usize) -> usize {
             let mut view_dist: usize = 1;
 
             // UP
-            let dist = (r + 1..M).map(|y| mat[y][c]).position(|v| v >= *val);
-
-            let dist = match dist {
+            let dist = match (r + 1..M).map(|y| mat[y][c]).position(|v| v >= *val) {
                 Some(d) => d + 1,
                 None => M - r - 1,
             };
@@ -84,9 +91,7 @@ fn part2(mat: &Vec<Vec<usize>>, M: usize, N: usize) -> usize {
             view_dist *= dist;
 
             // DOWN
-            let dist = (0..r).rev().map(|y| mat[y][c]).position(|v| v >= *val);
-
-            let dist = match dist {
+            let dist = match (0..r).rev().map(|y| mat[y][c]).position(|v| v >= *val) {
                 Some(d) => d + 1,
                 None => r,
             };
@@ -94,20 +99,15 @@ fn part2(mat: &Vec<Vec<usize>>, M: usize, N: usize) -> usize {
             view_dist *= dist;
 
             // RIGHT
-            let dist = (c + 1..N).map(|x| mat[r][x]).position(|v| v >= *val);
-
-            let dist = match dist {
+            let dist = match (c + 1..N).map(|x| mat[r][x]).position(|v| v >= *val) {
                 Some(d) => d + 1,
                 None => N - c - 1,
             };
 
-            //println!("d {} for VAL {}", dist, val);
             view_dist *= dist;
 
             // LEFT
-            let dist = (0..c).rev().map(|x| mat[r][x]).position(|v| v >= *val);
-
-            let dist = match dist {
+            let dist = match (0..c).rev().map(|x| mat[r][x]).position(|v| v >= *val) {
                 Some(d) => d + 1,
                 None => c,
             };
@@ -118,6 +118,5 @@ fn part2(mat: &Vec<Vec<usize>>, M: usize, N: usize) -> usize {
         }
     }
 
-    // Find max of all trees viewing distances
     *viewing_distances.iter().max().unwrap() as usize
 }
